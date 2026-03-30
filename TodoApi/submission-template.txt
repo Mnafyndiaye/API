@@ -1,8 +1,7 @@
 Nom et prenom: Maman Nafy Ndiaye
-Classe: Master 2
+Classe: Master 2 GLSI
 
 
-Lien du repository GitHub public:
 
 Contenu verifie:
 - Code complet de l'API
