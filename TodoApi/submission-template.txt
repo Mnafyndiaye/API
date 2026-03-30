@@ -1,6 +1,6 @@
-Nom et prenom:
-Classe:
-Date:
+Nom et prenom: Maman Nafy Ndiaye
+Classe: Master 2
+
 
 Lien du repository GitHub public:
 
@@ -10,6 +10,6 @@ Contenu verifie:
 - docker-compose.yml
 - README avec etapes d'execution
 
-Lien/preuve de reussite du cours "Securisez votre application .NET":
 
-Commentaires:
+
+
