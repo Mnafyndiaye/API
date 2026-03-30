@@ -1,6 +1,62 @@
 @TodoApi_HostAddress = http://localhost:5158
+@UserToken = REMPLACER_PAR_TOKEN_USER
+@AdminToken = REMPLACER_PAR_TOKEN_ADMIN
+@TodoId = REMPLACER_PAR_ID_MONGODB
 
-GET {{TodoApi_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{TodoApi_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+	"username": "user",
+	"password": "User123!"
+}
 
 ###
+
+POST {{TodoApi_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+	"username": "admin",
+	"password": "Admin123!"
+}
+
+###
+
+GET {{TodoApi_HostAddress}}/api/todoitems
+Accept: application/json
+Authorization: Bearer {{UserToken}}
+
+###
+
+GET {{TodoApi_HostAddress}}/api/todoitems/{{TodoId}}
+Accept: application/json
+Authorization: Bearer {{UserToken}}
+
+###
+
+POST {{TodoApi_HostAddress}}/api/todoitems
+Content-Type: application/json
+Authorization: Bearer {{AdminToken}}
+
+{
+	"name": "Apprendre ASP.NET Core",
+	"isComplete": false
+}
+
+###
+
+PUT {{TodoApi_HostAddress}}/api/todoitems/{{TodoId}}
+Content-Type: application/json
+Authorization: Bearer {{AdminToken}}
+
+{
+	"id": "{{TodoId}}",
+	"name": "Apprendre ASP.NET Core (maj)",
+	"isComplete": true
+}
+
+###
+
+DELETE {{TodoApi_HostAddress}}/api/todoitems/{{TodoId}}
+Authorization: Bearer {{AdminToken}}

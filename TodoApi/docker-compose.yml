@@ -1,0 +1,30 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: todoapi-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  todoapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: todoapi-app
+    depends_on:
+      - mongo
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      TodoDatabase__ConnectionString: mongodb://mongo:27017
+      TodoDatabase__DatabaseName: TodoDb
+      TodoDatabase__TodoItemsCollectionName: TodoItems
+      Jwt__Issuer: TodoApi
+      Jwt__Audience: TodoApiClient
+      Jwt__Key: A_Very_Strong_And_Long_Secret_Key_2026!
+      Jwt__ExpirationMinutes: 60
+
+volumes:
+  mongo_data:

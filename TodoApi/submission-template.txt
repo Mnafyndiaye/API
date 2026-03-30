@@ -1,0 +1,15 @@
+Nom et prenom:
+Classe:
+Date:
+
+Lien du repository GitHub public:
+
+Contenu verifie:
+- Code complet de l'API
+- Dockerfile
+- docker-compose.yml
+- README avec etapes d'execution
+
+Lien/preuve de reussite du cours "Securisez votre application .NET":
+
+Commentaires:

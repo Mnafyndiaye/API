@@ -1,32 +1,34 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TodoApi.Models;
+using TodoApi.Services;
 
 namespace TodoApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class TodoItemsController : ControllerBase
 {
-    private readonly TodoContext _context;
+    private readonly TodoItemsService _todoItemsService;
 
-    public TodoItemsController(TodoContext context)
+    public TodoItemsController(TodoItemsService todoItemsService)
     {
-        _context = context;
+        _todoItemsService = todoItemsService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
     {
-        return await _context.TodoItems
+        return (await _todoItemsService.GetAsync())
             .Select(x => ItemToDTO(x))
-            .ToListAsync();
+            .ToList();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<TodoItemDTO>> GetTodoItem(long id)
+    public async Task<ActionResult<TodoItemDTO>> GetTodoItem(string id)
     {
-        var todoItem = await _context.TodoItems.FindAsync(id);
+        var todoItem = await _todoItemsService.GetAsync(id);
 
         if (todoItem == null)
         {
@@ -37,14 +39,15 @@ public class TodoItemsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutTodoItem(long id, TodoItemDTO todoItemDTO)
+    [Authorize(Roles = "admin")]
+    public async Task<IActionResult> PutTodoItem(string id, TodoItemDTO todoItemDTO)
     {
         if (id != todoItemDTO.Id)
         {
             return BadRequest();
         }
 
-        var todoItem = await _context.TodoItems.FindAsync(id);
+        var todoItem = await _todoItemsService.GetAsync(id);
         if (todoItem == null)
         {
             return NotFound();
@@ -53,12 +56,13 @@ public class TodoItemsController : ControllerBase
         todoItem.Name = todoItemDTO.Name;
         todoItem.IsComplete = todoItemDTO.IsComplete;
 
-        await _context.SaveChangesAsync();
+        await _todoItemsService.UpdateAsync(id, todoItem);
 
         return NoContent();
     }
 
     [HttpPost]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<TodoItemDTO>> PostTodoItem(TodoItemDTO todoItemDTO)
     {
         var todoItem = new TodoItem
@@ -67,8 +71,7 @@ public class TodoItemsController : ControllerBase
             Name = todoItemDTO.Name
         };
 
-        _context.TodoItems.Add(todoItem);
-        await _context.SaveChangesAsync();
+        await _todoItemsService.CreateAsync(todoItem);
 
         return CreatedAtAction(
             nameof(GetTodoItem),
@@ -77,16 +80,16 @@ public class TodoItemsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteTodoItem(long id)
+    [Authorize(Roles = "admin")]
+    public async Task<IActionResult> DeleteTodoItem(string id)
     {
-        var todoItem = await _context.TodoItems.FindAsync(id);
+        var todoItem = await _todoItemsService.GetAsync(id);
         if (todoItem == null)
         {
             return NotFound();
         }
 
-        _context.TodoItems.Remove(todoItem);
-        await _context.SaveChangesAsync();
+        await _todoItemsService.RemoveAsync(id);
 
         return NoContent();
     }

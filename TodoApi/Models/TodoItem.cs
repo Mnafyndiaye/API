@@ -1,8 +1,17 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace TodoApi.Models;
 
 public class TodoItem
 {
-    public long Id { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } = null!;
+
+    [BsonElement("name")]
     public string? Name { get; set; }
+
+    [BsonElement("isComplete")]
     public bool IsComplete { get; set; }
 }
